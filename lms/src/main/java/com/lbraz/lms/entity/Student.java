@@ -10,9 +10,10 @@ import java.util.UUID;
 @Table(name = "students")
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 @EqualsAndHashCode(of = "id")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Student {
 
     @Id
