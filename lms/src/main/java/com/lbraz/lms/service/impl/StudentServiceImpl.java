@@ -1,24 +1,27 @@
 package com.lbraz.lms.service.impl;
 
+import com.lbraz.lms.dto.StudentRegistrationDTO;
 import com.lbraz.lms.entity.Student;
-import com.lbraz.lms.entity.dto.StudentRegistrationDTO;
 import com.lbraz.lms.exception.DuplicateResourceException;
 import com.lbraz.lms.exception.InvalidAgeException;
 import com.lbraz.lms.repository.StudentRepository;
 import com.lbraz.lms.service.StudentService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
-public class StudentServiceImpl implements StudentService {
+public class StudentServiceImpl extends BaseServiceImpl<Student, UUID> implements StudentService {
 
     private final StudentRepository repository;
+
+    public StudentServiceImpl(StudentRepository repository) {
+        super(repository);
+        this.repository = repository;
+    }
 
     @Override
     @Transactional
