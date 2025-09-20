@@ -1,6 +1,7 @@
 package com.lbraz.lms.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -18,18 +19,21 @@ public class Course {
 
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
+    @NotBlank
+    @Size(min = 3, max = 255)
     @Column(name = "name", nullable = false, unique = true, length = 255)
     private String name;
 
+    @NotBlank
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @NotNull
+    @Min(1)
+    @Max(6)
     @Column(name = "duration_in_months", nullable = false)
     private Integer durationInMonths;
 }

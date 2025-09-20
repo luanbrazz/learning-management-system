@@ -1,12 +1,11 @@
 package com.lbraz.lms.service.impl;
 
-import com.lbraz.lms.dto.StudentRegistrationDTO;
 import com.lbraz.lms.entity.Student;
 import com.lbraz.lms.exception.DuplicateResourceException;
 import com.lbraz.lms.exception.InvalidAgeException;
 import com.lbraz.lms.repository.StudentRepository;
 import com.lbraz.lms.service.StudentService;
-import org.springframework.context.MessageSource;
+import com.lbraz.lms.util.MessageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,39 +17,23 @@ import java.util.UUID;
 public class StudentServiceImpl extends BaseServiceImpl<Student, UUID> implements StudentService {
 
     private final StudentRepository repository;
-    private final MessageSource messageSource;
 
-    public StudentServiceImpl(StudentRepository repository, MessageSource messageSource) {
+    public StudentServiceImpl(StudentRepository repository) {
         super(repository);
         this.repository = repository;
-        this.messageSource = messageSource;
     }
 
     @Override
     @Transactional
-    public void registerStudent(StudentRegistrationDTO studentDTO) {
-        if (repository.findByEmail(studentDTO.email()).isPresent()) {
-            throw new DuplicateResourceException(messageSource.getMessage("error.email.duplicate", null, null));
+    public Student save(Student entity) {
+        if (calculateAge(entity.getBirthDate()) < 16) {
+            throw new InvalidAgeException(MessageUtil.get("error.age.invalid"));
+        }
+        if (repository.findByEmail(entity.getEmail()).isPresent()) {
+            throw new DuplicateResourceException(MessageUtil.get("error.email.duplicate"));
         }
 
-        if (calculateAge(studentDTO.birthDate()) < 16) {
-            throw new InvalidAgeException(messageSource.getMessage("error.age.invalid", null, null));
-        }
-
-        Student student = Student.builder()
-                .firstName(studentDTO.firstName())
-                .lastName(studentDTO.lastName())
-                .birthDate(studentDTO.birthDate())
-                .email(studentDTO.email())
-                .phoneNumber(studentDTO.phoneNumber())
-                .zipCode(studentDTO.zipCode())
-                .addressLine1(studentDTO.addressLine1())
-                .addressLine2(studentDTO.addressLine2())
-                .city(studentDTO.city())
-                .state(studentDTO.state())
-                .build();
-
-        repository.save(student);
+        return repository.save(entity);
     }
 
     private int calculateAge(LocalDate birthDate) {
