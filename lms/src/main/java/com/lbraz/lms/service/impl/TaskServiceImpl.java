@@ -4,12 +4,14 @@ import com.lbraz.lms.entity.Enrollment;
 import com.lbraz.lms.entity.Task;
 import com.lbraz.lms.enums.CourseStatus;
 import com.lbraz.lms.exception.InvalidTimeException;
-import com.lbraz.lms.repository.TaskRepository;
+import com.lbraz.lms.exception.ResourceNotFoundException;
 import com.lbraz.lms.repository.EnrollmentRepository;
+import com.lbraz.lms.repository.TaskRepository;
 import com.lbraz.lms.service.TaskService;
 import com.lbraz.lms.util.MessageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.UUID;
 
 @Service
@@ -31,7 +33,11 @@ public class TaskServiceImpl extends BaseServiceImpl<Task, UUID> implements Task
             throw new InvalidTimeException(MessageUtil.get("error.time.invalid"));
         }
 
-        Enrollment enrollment = entity.getEnrollment();
+        Enrollment enrollment = enrollmentRepository.findById(entity.getEnrollment().getId())
+                .orElseThrow(() -> new ResourceNotFoundException(MessageUtil.get("error.enrollment.notFound", entity.getEnrollment().getId())));
+
+        entity.setEnrollment(enrollment);
+
         if (enrollment.getStatus() == CourseStatus.NOT_STARTED) {
             enrollment.setStatus(CourseStatus.IN_PROGRESS);
             enrollmentRepository.save(enrollment);

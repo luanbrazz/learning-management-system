@@ -16,7 +16,7 @@ import com.lbraz.lms.util.MessageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -41,21 +41,15 @@ public class EnrollmentServiceImpl extends BaseServiceImpl<Enrollment, UUID> imp
     @Override
     @Transactional
     public Enrollment enrollStudent(EnrollmentRequest request) {
-        Student student = studentRepository.findById(request.studentId())
-                .orElseThrow(() -> new ResourceNotFoundException(MessageUtil.get("error.student.notFound", request.studentId())));
+        Student student = this.findStudent(request.studentId());
+        Course course = this.findCourse(request.courseId());
 
-        Course course = courseRepository.findById(request.courseId())
-                .orElseThrow(() -> new ResourceNotFoundException(MessageUtil.get("error.course.notFound", request.courseId())));
-
-        long studentEnrollmentsCount = enrollmentRepository.countByStudentId(student.getId());
-        if (studentEnrollmentsCount >= MAX_ENROLLMENTS_PER_STUDENT) {
-            throw new DuplicateResourceException(MessageUtil.get("error.enrollment.limit"));
-        }
+        this.validateEnrollmentLimit(student.getId());
 
         Enrollment enrollment = Enrollment.builder()
                 .student(student)
                 .course(course)
-                .enrollmentDate(LocalDate.now())
+                .enrollmentDate(LocalDateTime.now())
                 .build();
 
         return enrollmentRepository.save(enrollment);
@@ -64,15 +58,45 @@ public class EnrollmentServiceImpl extends BaseServiceImpl<Enrollment, UUID> imp
     @Override
     @Transactional
     public Enrollment completeCourse(UUID enrollmentId) {
-        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
-                .orElseThrow(() -> new ResourceNotFoundException(MessageUtil.get("error.enrollment.notFound", enrollmentId)));
+        Enrollment enrollment = this.findEnrollment(enrollmentId);
 
-        if (enrollment.getStatus() != CourseStatus.IN_PROGRESS) {
-            throw new InvalidStatusChangeException(MessageUtil.get("error.enrollment.invalidStatus", enrollment.getStatus().toString()));
-        }
+        this.validateCourseInProgress(enrollment);
 
         enrollment.setStatus(CourseStatus.COMPLETED);
+        enrollment.setCompletionDate(LocalDateTime.now());
         return enrollmentRepository.save(enrollment);
     }
 
+    private Student findStudent(UUID studentId) {
+        return studentRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        MessageUtil.get("error.student.notFound", studentId)));
+    }
+
+    private Course findCourse(UUID courseId) {
+        return courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        MessageUtil.get("error.course.notFound", courseId)));
+    }
+
+    private Enrollment findEnrollment(UUID enrollmentId) {
+        return enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        MessageUtil.get("error.enrollment.notFound", enrollmentId)));
+    }
+
+    private void validateEnrollmentLimit(UUID studentId) {
+        long enrollments = enrollmentRepository.countByStudentId(studentId);
+        if (enrollments >= MAX_ENROLLMENTS_PER_STUDENT) {
+            throw new DuplicateResourceException(MessageUtil.get("error.enrollment.limit"));
+        }
+    }
+
+    private void validateCourseInProgress(Enrollment enrollment) {
+        if (enrollment.getStatus() != CourseStatus.IN_PROGRESS) {
+            String translatedStatus = MessageUtil.get("courseStatus." + enrollment.getStatus());
+            throw new InvalidStatusChangeException(
+                    MessageUtil.get("error.enrollment.invalidStatus", translatedStatus));
+        }
+    }
 }

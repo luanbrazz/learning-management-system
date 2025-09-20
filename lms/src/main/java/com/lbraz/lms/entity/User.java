@@ -1,5 +1,6 @@
 package com.lbraz.lms.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -7,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -42,6 +44,7 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToOne(mappedBy = "user")
+    @JsonIgnore
     private Student student;
 
     @Override

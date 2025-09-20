@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -35,7 +35,10 @@ public class Enrollment {
     private Course course;
 
     @Column(name = "enrollment_date", nullable = false)
-    private LocalDate enrollmentDate;
+    private LocalDateTime enrollmentDate;
+
+    @Column(name = "completion_date")
+    private LocalDateTime completionDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
