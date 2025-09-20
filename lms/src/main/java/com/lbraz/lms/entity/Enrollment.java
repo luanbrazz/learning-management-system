@@ -1,5 +1,6 @@
 package com.lbraz.lms.entity;
 
+import com.lbraz.lms.enums.CourseStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -35,4 +36,9 @@ public class Enrollment {
 
     @Column(name = "enrollment_date", nullable = false)
     private LocalDate enrollmentDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @Builder.Default
+    private CourseStatus status = CourseStatus.NOT_STARTED;
 }

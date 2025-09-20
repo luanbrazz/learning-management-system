@@ -4,7 +4,9 @@ import com.lbraz.lms.dto.EnrollmentRequest;
 import com.lbraz.lms.entity.Course;
 import com.lbraz.lms.entity.Enrollment;
 import com.lbraz.lms.entity.Student;
+import com.lbraz.lms.enums.CourseStatus;
 import com.lbraz.lms.exception.DuplicateResourceException;
+import com.lbraz.lms.exception.InvalidStatusChangeException;
 import com.lbraz.lms.exception.ResourceNotFoundException;
 import com.lbraz.lms.repository.CourseRepository;
 import com.lbraz.lms.repository.EnrollmentRepository;
@@ -56,6 +58,20 @@ public class EnrollmentServiceImpl extends BaseServiceImpl<Enrollment, UUID> imp
                 .enrollmentDate(LocalDate.now())
                 .build();
 
+        return enrollmentRepository.save(enrollment);
+    }
+
+    @Override
+    @Transactional
+    public Enrollment completeCourse(UUID enrollmentId) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new ResourceNotFoundException(MessageUtil.get("error.enrollment.notFound", enrollmentId)));
+
+        if (enrollment.getStatus() != CourseStatus.IN_PROGRESS) {
+            throw new InvalidStatusChangeException(MessageUtil.get("error.enrollment.invalidStatus", enrollment.getStatus().toString()));
+        }
+
+        enrollment.setStatus(CourseStatus.COMPLETED);
         return enrollmentRepository.save(enrollment);
     }
 

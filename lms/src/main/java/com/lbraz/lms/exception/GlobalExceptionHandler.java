@@ -60,4 +60,28 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(NOT_FOUND).body(error);
     }
+
+    @ExceptionHandler(InvalidTimeException.class)
+    public ResponseEntity<StandardError> handleInvalidTimeException(InvalidTimeException ex, HttpServletRequest request) {
+        StandardError error = StandardError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(UNPROCESSABLE_ENTITY.value())
+                .error(UNPROCESSABLE_ENTITY.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(error);
+    }
+
+    @ExceptionHandler(InvalidStatusChangeException.class)
+    public ResponseEntity<StandardError> handleInvalidStatusChangeException(InvalidStatusChangeException ex, HttpServletRequest request) {
+        StandardError error = StandardError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(UNPROCESSABLE_ENTITY.value())
+                .error(UNPROCESSABLE_ENTITY.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(error);
+    }
 }
