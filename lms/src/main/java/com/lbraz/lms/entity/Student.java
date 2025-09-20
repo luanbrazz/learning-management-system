@@ -25,6 +25,10 @@ public class Student {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     @NotBlank
     @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;

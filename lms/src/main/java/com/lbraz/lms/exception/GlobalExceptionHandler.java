@@ -84,4 +84,16 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(error);
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<StandardError> handleUserNotFoundException(UserNotFoundException ex, HttpServletRequest request) {
+        StandardError error = StandardError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(NOT_FOUND.value())
+                .error(NOT_FOUND.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(NOT_FOUND).body(error);
+    }
 }
