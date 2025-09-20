@@ -6,12 +6,14 @@ import com.lbraz.lms.service.EnrollmentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/enrollments")
+@PreAuthorize("hasRole('STUDENT') or hasRole('ADMIN')")
 public class EnrollmentController extends BaseController<Enrollment, UUID> {
 
     private final EnrollmentService enrollmentService;
