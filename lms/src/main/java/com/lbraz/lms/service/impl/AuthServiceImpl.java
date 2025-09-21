@@ -28,6 +28,11 @@ public class AuthServiceImpl implements AuthService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
         String jwtToken = jwtService.generateToken(userDetails);
 
-        return new LoginResponse(jwtToken);
+        String userRole = userDetails.getAuthorities().stream()
+                .findFirst()
+                .map(authority -> authority.getAuthority())
+                .orElse(null);
+
+        return new LoginResponse(jwtToken, userRole);
     }
 }

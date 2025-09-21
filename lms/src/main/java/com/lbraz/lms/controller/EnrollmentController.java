@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,5 +33,12 @@ public class EnrollmentController extends BaseController<Enrollment, UUID> {
     public ResponseEntity<Enrollment> completeCourse(@PathVariable UUID id) {
         Enrollment completedEnrollment = enrollmentService.completeCourse(id);
         return ResponseEntity.ok(completedEnrollment);
+    }
+
+    @PatchMapping("/expire")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateExpiredEnrollments(@RequestBody List<UUID> enrollmentIds) {
+        enrollmentService.updateExpiredEnrollments(enrollmentIds);
+        return ResponseEntity.noContent().build();
     }
 }

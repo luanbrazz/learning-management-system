@@ -4,5 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record LoginResponse(
         @JsonProperty("access_token")
-        String accessToken
-) {}
+        String accessToken,
+        @JsonProperty("role")
+        String userRole) {
+}

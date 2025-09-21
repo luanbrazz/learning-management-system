@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -65,6 +66,21 @@ public class EnrollmentServiceImpl extends BaseServiceImpl<Enrollment, UUID> imp
         enrollment.setStatus(CourseStatus.COMPLETED);
         enrollment.setCompletionDate(LocalDateTime.now());
         return enrollmentRepository.save(enrollment);
+    }
+
+    @Override
+    @Transactional
+    public void updateExpiredEnrollments(List<UUID> enrollmentIds) {
+        for (UUID id : enrollmentIds) {
+            Enrollment enrollment = enrollmentRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException(MessageUtil.get("error.enrollment.notFound", id)));
+
+            if (enrollment.getStatus() != CourseStatus.COMPLETED) {
+                enrollment.setStatus(CourseStatus.EXPIRED);
+                enrollment.setCompletionDate(LocalDateTime.now());
+                enrollmentRepository.save(enrollment);
+            }
+        }
     }
 
     private Student findStudent(UUID studentId) {
