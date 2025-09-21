@@ -49,7 +49,6 @@ public class GlobalExceptionHandler {
         String message = fieldError.getDefaultMessage();
         String field = fieldError.getField();
 
-        // Tenta obter a mensagem traduzida do MessageSource
         try {
             String messageKey = fieldError.getCodes()[0];
             return messageSource.getMessage(messageKey, null, fieldError.getDefaultMessage(), null);
