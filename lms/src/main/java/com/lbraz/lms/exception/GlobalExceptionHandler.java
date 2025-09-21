@@ -147,4 +147,17 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(NOT_FOUND).body(error);
     }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<StandardError> handleInvalidCredentialsException(InvalidCredentialsException ex, HttpServletRequest request) {
+        StandardError error = StandardError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(UNAUTHORIZED.value())
+                .error(UNAUTHORIZED.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(UNAUTHORIZED).body(error);
+    }
+
 }
