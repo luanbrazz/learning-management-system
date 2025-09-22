@@ -50,21 +50,32 @@ export const routes: Routes = [
   },
   {
     path: 'student/enrollments',
-    component: EnrollmentListComponent,
-    canActivate: [AuthGuard],
-    data: {roles: ['ROLE_STUDENT']}
-  },
-  {
-    path: 'student/enrollments/:enrollmentId/tasks',
-    component: TaskListComponent,
-    canActivate: [AuthGuard],
-    data: {roles: ['ROLE_STUDENT']}
-  },
-  {
-    path: 'student/enrollments/:enrollmentId/tasks/new',
-    component: TaskFormComponent,
-    canActivate: [AuthGuard],
-    data: {roles: ['ROLE_STUDENT']},
+    children: [
+      {
+        path: '',
+        component: EnrollmentListComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['ROLE_STUDENT', 'ROLE_ADMIN']}
+      },
+      {
+        path: ':enrollmentId/tasks',
+        component: TaskListComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['ROLE_STUDENT', 'ROLE_ADMIN']}
+      },
+      {
+        path: ':enrollmentId/tasks/new',
+        component: TaskFormComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['ROLE_STUDENT']}
+      },
+      {
+        path: ':enrollmentId/tasks/:taskId/edit',
+        component: TaskFormComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['ROLE_STUDENT']}
+      }
+    ]
   },
   {
     path: 'admin/enrollments',
