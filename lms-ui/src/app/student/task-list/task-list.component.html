@@ -23,7 +23,7 @@
       <tr *ngFor="let task of tasks">
         <td>{{ task.description }}</td>
         <td>{{ task.taskCategory.name }}</td>
-        <td>{{ task.logDate }}</td>
+        <td>{{ task.logDate ? (task.logDate | date: 'dd/MM/yyyy') : 'Sem data' }}</td>
         <td>{{ task.timeSpentInMinutes }}</td>
         <td>
           <a *ngIf="isAdmin"

@@ -4,6 +4,7 @@ import com.lbraz.lms.enums.CourseStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -47,6 +48,9 @@ public class Enrollment {
     @Builder.Default
     private CourseStatus status = CourseStatus.NOT_STARTED;
 
+    @Transient
+    private boolean isActiveAndNearExpiration;
+
     @PrePersist
     public void prePersist() {
         if (this.enrollmentDate == null) {
@@ -55,5 +59,14 @@ public class Enrollment {
         if (this.expirationDate == null) {
             this.expirationDate = this.enrollmentDate.plusMonths(6);
         }
+    }
+
+    public boolean isActiveAndNearExpiration() {
+        if (status == CourseStatus.COMPLETED || status == CourseStatus.EXPIRED) {
+            return false;
+        }
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime oneMonthFromNow = now.plusMonths(1);
+        return expirationDate.isBefore(now) || !expirationDate.isAfter(oneMonthFromNow);
     }
 }

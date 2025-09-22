@@ -9,4 +9,5 @@ export interface Enrollment {
   completionDate: string | null;
   expirationDate: string | null;
   status: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'EXPIRED';
+  activeAndNearExpiration: boolean;
 }

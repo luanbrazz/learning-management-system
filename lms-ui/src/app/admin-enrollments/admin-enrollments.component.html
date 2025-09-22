@@ -1,13 +1,12 @@
 <div class="container mt-4">
   <h2 *ngIf="isAdmin">Gerenciamento de Matrículas do Administrador</h2>
   <h2 *ngIf="!isAdmin">Minhas Matrículas</h2>
-
   <div class="mb-3" *ngIf="isAdmin">
-    <button class="btn btn-warning" (click)="expireSelectedEnrollments()" [disabled]="selectedEnrollmentIds.length === 0">
+    <button class="btn btn-warning" (click)="expireSelectedEnrollments()"
+            [disabled]="selectedEnrollmentIds.length === 0">
       Marcar como Expirado
     </button>
   </div>
-
   <table class="table table-striped table-hover">
     <thead>
     <tr>
@@ -18,11 +17,14 @@
       <th scope="col">Status</th>
       <th scope="col">Data de Matrícula</th>
       <th scope="col">Data de Expiração</th>
+      <th scope="col"></th>
       <th scope="col">Data de Finalização</th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let enrollment of enrollments" [class.disabled-row]="!!enrollment.completionDate">
+    <tr *ngFor="let enrollment of enrollments"
+        [class.disabled-row]="!!enrollment.completionDate"
+        [class.near-expiration]="enrollment.activeAndNearExpiration">
       <td>
         <input
           type="checkbox"
@@ -36,21 +38,22 @@
         <a [routerLink]="['/student/enrollments', enrollment.id, 'tasks']">{{ enrollment.course.name }}</a>
       </td>
       <td>
-          <span class="badge" [ngClass]="{'bg-success': enrollment.status === 'COMPLETED', 'bg-warning text-dark': enrollment.status === 'IN_PROGRESS', 'bg-info text-dark': enrollment.status === 'NOT_STARTED', 'bg-danger': enrollment.status === 'EXPIRED'}">
-            {{ enrollment.status }}
-          </span>
+        <span class="badge"
+              [ngClass]="{'bg-success': enrollment.status === 'COMPLETED', 'bg-warning text-dark': enrollment.status === 'IN_PROGRESS', 'bg-info text-dark': enrollment.status === 'NOT_STARTED', 'bg-danger': enrollment.status === 'EXPIRED'}">
+          {{ enrollment.status }}
+        </span>
       </td>
-      <td>{{ enrollment.enrollmentDate | date: 'medium' }}</td>
-      <td>{{ enrollment.expirationDate | date: 'medium' }}</td>
-      <td>{{ enrollment.completionDate | date: 'medium' }}</td>
+      <td>{{ enrollment.enrollmentDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+      <td>{{ enrollment.expirationDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+      <td>
+        <i *ngIf="enrollment.activeAndNearExpiration" class="bi bi-exclamation-triangle text-warning"
+           title="Matrícula expirada ou próxima de expirar"></i>
+      </td>
+      <td>{{ enrollment.completionDate ? (enrollment.completionDate | date: 'dd/MM/yyyy HH:mm') : 'Não finalizado' }}</td>
     </tr>
     </tbody>
   </table>
 </div>
-
-<div class="container mt-4">
-</div>
-
 <app-confirmation-modal
   *ngIf="showConfirmationModal"
   title="Confirmar Expiração de Matrículas"
