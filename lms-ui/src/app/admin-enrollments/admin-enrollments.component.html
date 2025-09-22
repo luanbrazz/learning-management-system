@@ -1,7 +1,8 @@
 <div class="container mt-4">
-  <h2>Gerenciamento de Matrículas do Administrador</h2>
+  <h2 *ngIf="isAdmin">Gerenciamento de Matrículas do Administrador</h2>
+  <h2 *ngIf="!isAdmin">Minhas Matrículas</h2>
 
-  <div class="mb-3">
+  <div class="mb-3" *ngIf="isAdmin">
     <button class="btn btn-warning" (click)="expireSelectedEnrollments()" [disabled]="selectedEnrollmentIds.length === 0">
       Marcar como Expirado
     </button>

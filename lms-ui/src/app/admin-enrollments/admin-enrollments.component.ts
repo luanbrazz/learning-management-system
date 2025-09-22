@@ -5,6 +5,7 @@ import {Enrollment} from '../models/enrollment.model';
 import {NotificationService} from '../services/notification.service';
 import {RouterLink} from '@angular/router';
 import {ConfirmationModalComponent} from '../shared/confirmation-modal/confirmation-modal.component';
+import {AuthService} from '../services/auth.service';
 
 @Component({
   selector: 'app-admin-enrollments',
@@ -17,15 +18,18 @@ export class AdminEnrollmentsComponent implements OnInit {
   enrollments: Enrollment[] = [];
   selectedEnrollmentIds: string[] = [];
   showConfirmationModal = false;
+  isAdmin: boolean = false;
 
   constructor(
     private enrollmentService: EnrollmentService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService: AuthService
   ) {
   }
 
   ngOnInit(): void {
     this.loadEnrollments();
+    this.isAdmin = this.authService.isAdmin();
   }
 
   loadEnrollments(): void {

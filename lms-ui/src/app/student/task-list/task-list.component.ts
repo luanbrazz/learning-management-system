@@ -31,6 +31,9 @@ export class TaskListComponent implements OnInit {
     this.isAdmin = this.authService.isAdmin();
     if (this.enrollmentId) {
       this.loadTasks(this.enrollmentId);
+    } else {
+      this.errorMessage = 'ID da matrícula não encontrado.';
+      this.notificationService.showError(this.errorMessage);
     }
   }
 
@@ -41,6 +44,7 @@ export class TaskListComponent implements OnInit {
       },
       error: (err) => {
         this.errorMessage = 'Não foi possível carregar as tarefas.';
+        this.notificationService.showError(this.errorMessage);
       }
     });
   }
@@ -68,5 +72,9 @@ export class TaskListComponent implements OnInit {
         }
       });
     }
+  }
+
+  get isEnrollmentCompleted(): boolean {
+    return this.tasks.length > 0 && this.tasks[0].enrollment?.status === 'COMPLETED';
   }
 }
