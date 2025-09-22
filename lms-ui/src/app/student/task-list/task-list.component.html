@@ -47,4 +47,11 @@
       Nenhuma tarefa encontrada para esta matrícula.
     </div>
   </ng-template>
+  <app-confirmation-modal
+    *ngIf="showConfirmationModal"
+    title="Confirmar Exclusão"
+    message="Tem certeza que deseja excluir esta tarefa?"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()">
+  </app-confirmation-modal>
 </div>

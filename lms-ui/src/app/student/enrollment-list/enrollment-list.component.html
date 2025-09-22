@@ -7,17 +7,21 @@
 
   <div *ngIf="enrollments.length > 0; else noEnrollments">
     <div class="list-group">
-      <div *ngFor="let enrollment of enrollments" class="list-group-item d-flex justify-content-between align-items-center">
+      <div *ngFor="let enrollment of enrollments"
+           class="list-group-item d-flex justify-content-between align-items-center">
         <div>
           <h5 class="mb-1">{{ enrollment.course.name }}</h5>
           <p class="mb-1">{{ enrollment.course.description }}</p>
-          <small class="badge" [ngClass]="{'bg-success': enrollment.status === 'COMPLETED', 'bg-warning text-dark': enrollment.status === 'IN_PROGRESS', 'bg-info text-dark': enrollment.status === 'NOT_STARTED', 'bg-danger': enrollment.status === 'EXPIRED'}">
+          <small class="badge"
+                 [ngClass]="{'bg-success': enrollment.status === 'COMPLETED', 'bg-warning text-dark': enrollment.status === 'IN_PROGRESS', 'bg-info text-dark': enrollment.status === 'NOT_STARTED', 'bg-danger': enrollment.status === 'EXPIRED'}">
             {{ enrollment.status }}
           </small>
         </div>
         <div>
-          <a [routerLink]="['/student/enrollments', enrollment.id, 'tasks']" class="btn btn-sm btn-outline-info me-2">Ver Tarefas</a>
-          <button (click)="completeCourse(enrollment.id)" class="btn btn-sm btn-outline-success" [disabled]="enrollment.status !== 'IN_PROGRESS'">
+          <a [routerLink]="['/student/enrollments', enrollment.id, 'tasks']" class="btn btn-sm btn-outline-info me-2">Ver
+            Tarefas</a>
+          <button (click)="completeCourse(enrollment.id)" class="btn btn-sm btn-outline-success"
+                  [disabled]="enrollment.status !== 'IN_PROGRESS'">
             Concluir Curso
           </button>
         </div>
@@ -30,4 +34,12 @@
       Você não está matriculado em nenhum curso.
     </div>
   </ng-template>
+
+  <app-confirmation-modal
+    *ngIf="showConfirmationModal"
+    title="Confirmar Conclusão"
+    message="Tem certeza que deseja marcar este curso como concluído?"
+    (confirm)="confirmComplete()"
+    (cancel)="cancelComplete()">
+  </app-confirmation-modal>
 </div>
