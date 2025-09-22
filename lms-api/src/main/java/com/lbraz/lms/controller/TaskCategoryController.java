@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/task-categories")
-@PreAuthorize("hasRole('STUDENT')")
+@PreAuthorize("hasRole('ROLE_STUDENT')")
 public class TaskCategoryController extends BaseController<TaskCategory, UUID> {
     public TaskCategoryController(TaskCategoryService service) {
         super(service);

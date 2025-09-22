@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/enrollments")
-@PreAuthorize("hasRole('STUDENT') or hasRole('ADMIN')")
+@PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
 public class EnrollmentController extends BaseController<Enrollment, UUID> {
 
     private final EnrollmentService enrollmentService;
@@ -25,8 +25,8 @@ public class EnrollmentController extends BaseController<Enrollment, UUID> {
     }
 
     @PostMapping("/enroll")
-    public ResponseEntity<Enrollment> enrollStudent(@Valid @RequestBody EnrollmentRequest enrollmentDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(enrollmentService.enrollStudent(enrollmentDTO));
+    public ResponseEntity<Enrollment> enrollStudent(@Valid @RequestBody EnrollmentRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(enrollmentService.enrollStudent(request));
     }
 
     @PatchMapping("/{id}/complete")
@@ -36,7 +36,7 @@ public class EnrollmentController extends BaseController<Enrollment, UUID> {
     }
 
     @PatchMapping("/expire")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> updateExpiredEnrollments(@RequestBody List<UUID> enrollmentIds) {
         enrollmentService.updateExpiredEnrollments(enrollmentIds);
         return ResponseEntity.noContent().build();

@@ -6,6 +6,7 @@ import com.lbraz.lms.entity.Enrollment;
 import com.lbraz.lms.entity.Student;
 import com.lbraz.lms.enums.CourseStatus;
 import com.lbraz.lms.exception.DuplicateResourceException;
+import com.lbraz.lms.exception.EnrollmentExpirationException;
 import com.lbraz.lms.exception.InvalidStatusChangeException;
 import com.lbraz.lms.exception.ResourceNotFoundException;
 import com.lbraz.lms.repository.CourseRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class EnrollmentServiceImpl extends BaseServiceImpl<Enrollment, UUID> implements EnrollmentService {
 
     private static final int MAX_ENROLLMENTS_PER_STUDENT = 3;
+    private static final int MIN_MONTHS_TO_EXPIRE = 6;
 
     private final EnrollmentRepository enrollmentRepository;
     private final StudentRepository studentRepository;
@@ -44,6 +47,14 @@ public class EnrollmentServiceImpl extends BaseServiceImpl<Enrollment, UUID> imp
     public Enrollment enrollStudent(EnrollmentRequest request) {
         Student student = this.findStudent(request.studentId());
         Course course = this.findCourse(request.courseId());
+
+        enrollmentRepository.findByStudentIdAndCourseId(student.getId(), course.getId())
+                .ifPresent(existingEnrollment -> {
+                    if (existingEnrollment.getStatus() == CourseStatus.EXPIRED) {
+                    } else {
+                        throw new DuplicateResourceException(MessageUtil.get("error.enrollment.duplicate"));
+                    }
+                });
 
         this.validateEnrollmentLimit(student.getId());
 
@@ -75,10 +86,17 @@ public class EnrollmentServiceImpl extends BaseServiceImpl<Enrollment, UUID> imp
             Enrollment enrollment = enrollmentRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException(MessageUtil.get("error.enrollment.notFound", id)));
 
+            long monthsSinceEnrollment = ChronoUnit.MONTHS.between(enrollment.getEnrollmentDate(), LocalDateTime.now());
+            if (monthsSinceEnrollment < MIN_MONTHS_TO_EXPIRE) {
+                throw new EnrollmentExpirationException(MessageUtil.get("error.enrollment.notExpired"));
+            }
+
             if (enrollment.getStatus() != CourseStatus.COMPLETED) {
                 enrollment.setStatus(CourseStatus.EXPIRED);
                 enrollment.setCompletionDate(LocalDateTime.now());
                 enrollmentRepository.save(enrollment);
+            } else {
+                throw new InvalidStatusChangeException(MessageUtil.get("error.enrollment.alreadyCompleted"));
             }
         }
     }

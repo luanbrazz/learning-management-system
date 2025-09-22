@@ -4,7 +4,6 @@ import com.lbraz.lms.enums.CourseStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -40,8 +39,21 @@ public class Enrollment {
     @Column(name = "completion_date")
     private LocalDateTime completionDate;
 
+    @Column(name = "expiration_date", nullable = false)
+    private LocalDateTime expirationDate;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     @Builder.Default
     private CourseStatus status = CourseStatus.NOT_STARTED;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.enrollmentDate == null) {
+            this.enrollmentDate = LocalDateTime.now();
+        }
+        if (this.expirationDate == null) {
+            this.expirationDate = this.enrollmentDate.plusMonths(6);
+        }
+    }
 }

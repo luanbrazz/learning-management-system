@@ -12,6 +12,7 @@ import com.lbraz.lms.util.MessageUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -44,5 +45,11 @@ public class TaskServiceImpl extends BaseServiceImpl<Task, UUID> implements Task
         }
 
         return repository.save(entity);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Task> findByEnrollmentId(UUID enrollmentId) {
+        return repository.findByEnrollmentId(enrollmentId);
     }
 }

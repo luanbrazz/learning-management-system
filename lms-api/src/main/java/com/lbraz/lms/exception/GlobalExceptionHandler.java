@@ -19,7 +19,6 @@ import static org.springframework.http.HttpStatus.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private final MessageSource messageSource;
 
     public GlobalExceptionHandler(MessageSource messageSource) {
@@ -59,7 +58,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<StandardError> handleDuplicateResourceException(DuplicateResourceException ex, HttpServletRequest request) {
-        logger.warn("Duplicate resource error: {}", ex.getMessage());
         StandardError error = StandardError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(CONFLICT.value())
@@ -72,7 +70,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateUsernameException.class)
     public ResponseEntity<StandardError> handleDuplicateUsernameException(DuplicateUsernameException ex, HttpServletRequest request) {
-        logger.warn("Duplicate username error: {}", ex.getMessage());
         StandardError error = StandardError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(CONFLICT.value())
@@ -85,7 +82,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidAgeException.class)
     public ResponseEntity<StandardError> handleInvalidAgeException(InvalidAgeException ex, HttpServletRequest request) {
-        logger.warn("Invalid age error: {}", ex.getMessage());
         StandardError error = StandardError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(UNPROCESSABLE_ENTITY.value())
@@ -98,7 +94,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<StandardError> handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request) {
-        logger.warn("Resource not found: {}", ex.getMessage());
         StandardError error = StandardError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(NOT_FOUND.value())
@@ -111,7 +106,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidTimeException.class)
     public ResponseEntity<StandardError> handleInvalidTimeException(InvalidTimeException ex, HttpServletRequest request) {
-        logger.warn("Invalid time error: {}", ex.getMessage());
         StandardError error = StandardError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(UNPROCESSABLE_ENTITY.value())
@@ -124,7 +118,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidStatusChangeException.class)
     public ResponseEntity<StandardError> handleInvalidStatusChangeException(InvalidStatusChangeException ex, HttpServletRequest request) {
-        logger.warn("Invalid status change error: {}", ex.getMessage());
         StandardError error = StandardError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(UNPROCESSABLE_ENTITY.value())
@@ -137,7 +130,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<StandardError> handleUserNotFoundException(UserNotFoundException ex, HttpServletRequest request) {
-        logger.warn("User not found: {}", ex.getMessage());
         StandardError error = StandardError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(NOT_FOUND.value())
@@ -160,4 +152,27 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(UNAUTHORIZED).body(error);
     }
 
+    @ExceptionHandler(ViaCepException.class)
+    public ResponseEntity<StandardError> handleViaCepException(ViaCepException ex, HttpServletRequest request) {
+        StandardError error = StandardError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(BAD_REQUEST.value())
+                .error(BAD_REQUEST.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(EnrollmentExpirationException.class)
+    public ResponseEntity<StandardError> handleEnrollmentExpirationException(EnrollmentExpirationException ex, HttpServletRequest request) {
+        StandardError error = StandardError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(UNPROCESSABLE_ENTITY.value())
+                .error(UNPROCESSABLE_ENTITY.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(error);
+    }
 }

@@ -1,4 +1,7 @@
 export interface LoginResponse {
-  accessToken: string;
+  access_token: string;
   role: string;
+  full_name: string;
+  user_id: string;
+  student_id?: string;
 }

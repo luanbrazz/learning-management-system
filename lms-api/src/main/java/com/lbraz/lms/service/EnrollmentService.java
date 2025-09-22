@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface EnrollmentService extends BaseService<Enrollment, UUID> {
-    Enrollment enrollStudent(EnrollmentRequest enrollmentDTO);
+    Enrollment enrollStudent(EnrollmentRequest request);
 
     Enrollment completeCourse(UUID enrollmentId);
 
