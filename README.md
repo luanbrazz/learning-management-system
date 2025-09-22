@@ -1,6 +1,6 @@
 # LMS - Learning Management System
 
-Este projeto é uma aplicação **full stack** desenvolvida como parte de um desafio técnico para a empresa Viasoft. O objetivo é criar um sistema simples de gerenciamento de aprendizagem que permite a administração de cursos e o acompanhamento do progresso de estudantes.
+Este projeto é uma aplicação **full stack** desenvolvida como parte de um desafio técnico para a empresa GFT. O objetivo é criar um sistema simples de gerenciamento de aprendizagem que permite a administração de cursos e o acompanhamento do progresso de estudantes.
 
 ## Funcionalidades Implementadas
 
