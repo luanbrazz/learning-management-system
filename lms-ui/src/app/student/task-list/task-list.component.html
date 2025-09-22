@@ -1,13 +1,15 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Minhas Tarefas</h2>
-    <a *ngIf="!isAdmin && !isEnrollmentCompleted"
+    <a *ngIf="!isAdmin && !isEnrollmentCompletedOrExpired"
        [routerLink]="['/student/enrollments', enrollmentId, 'tasks', 'new']"
        class="btn btn-primary">Adicionar Nova Tarefa</a>
   </div>
+
   <div *ngIf="errorMessage" class="alert alert-danger">
     {{ errorMessage }}
   </div>
+
   <div *ngIf="tasks.length > 0; else noTasks">
     <table class="table table-striped table-hover">
       <thead>
@@ -23,35 +25,35 @@
       <tr *ngFor="let task of tasks">
         <td>{{ task.description }}</td>
         <td>{{ task.taskCategory.name }}</td>
-        <td>{{ task.logDate ? (task.logDate | date: 'dd/MM/yyyy') : 'Sem data' }}</td>
+        <td>{{ task.logDate | date: 'dd/MM/yyyy' }}</td>
         <td>{{ task.timeSpentInMinutes }}</td>
         <td>
-          <a *ngIf="isAdmin"
-             [routerLink]="['/student/enrollments', enrollmentId, 'tasks', task.id, 'view']"
-             class="btn btn-sm btn-outline-info me-2">Visualizar</a>
-          <ng-container *ngIf="!isAdmin && task.enrollment.status !== 'COMPLETED'">
+          <ng-container *ngIf="isAdmin || isEnrollmentCompletedOrExpired">
+            <a [routerLink]="['/student/enrollments', enrollmentId, 'tasks', task.id, 'view']"
+               class="btn btn-sm btn-outline-info me-2">Visualizar</a>
+          </ng-container>
+          <ng-container *ngIf="!isAdmin && !isEnrollmentCompletedOrExpired">
             <a [routerLink]="['/student/enrollments', enrollmentId, 'tasks', task.id, 'edit']"
                class="btn btn-sm btn-outline-secondary me-2">Editar</a>
-            <button (click)="deleteTask(task.id)" class="btn btn-sm btn-outline-danger">Excluir</button>
+            <button (click)="showDeleteConfirmation(task.id)" class="btn btn-sm btn-outline-danger">Excluir</button>
           </ng-container>
-          <a *ngIf="!isAdmin && task.enrollment.status === 'COMPLETED'"
-             [routerLink]="['/student/enrollments', enrollmentId, 'tasks', task.id, 'view']"
-             class="btn btn-sm btn-outline-info me-2">Visualizar</a>
         </td>
       </tr>
       </tbody>
     </table>
   </div>
+
   <ng-template #noTasks>
     <div class="alert alert-info text-center">
       Nenhuma tarefa encontrada para esta matrícula.
     </div>
   </ng-template>
-  <app-confirmation-modal
-    *ngIf="showConfirmationModal"
-    title="Confirmar Exclusão"
-    message="Tem certeza que deseja excluir esta tarefa?"
-    (confirm)="confirmDelete()"
-    (cancel)="cancelDelete()">
-  </app-confirmation-modal>
 </div>
+
+<app-confirmation-modal
+  *ngIf="showConfirmationModal"
+  title="Confirmar Exclusão de Tarefa"
+  message="Tem certeza que deseja excluir esta tarefa?"
+  (confirm)="confirmDeletion()"
+  (cancel)="cancelDeletion()">
+</app-confirmation-modal>
