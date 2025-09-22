@@ -5,9 +5,10 @@ import {CourseFormComponent} from './courses/course-form/course-form.component';
 import {CourseBrowserComponent} from './student/course-browser/course-browser.component';
 import {EnrollmentListComponent} from './student/enrollment-list/enrollment-list.component';
 import {TaskListComponent} from './student/task-list/task-list.component';
-import {AuthGuard} from './auth.guard';
 import {TaskFormComponent} from './tasks/task-form/task-form.component';
+import {AuthGuard} from './auth.guard';
 import {AdminEnrollmentsComponent} from './admin-enrollments/admin-enrollments.component';
+import {TaskViewComponent} from './student/taskView/task-view.component';
 
 export const routes: Routes = [
   {path: '', redirectTo: 'auth', pathMatch: 'full'},
@@ -74,6 +75,12 @@ export const routes: Routes = [
         component: TaskFormComponent,
         canActivate: [AuthGuard],
         data: {roles: ['ROLE_STUDENT']}
+      },
+      {
+        path: ':enrollmentId/tasks/:taskId/view',
+        component: TaskViewComponent,
+        canActivate: [AuthGuard],
+        data: {roles: ['ROLE_STUDENT', 'ROLE_ADMIN']}
       }
     ]
   },

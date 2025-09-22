@@ -7,5 +7,6 @@ export interface Enrollment {
   course: Course;
   enrollmentDate: string;
   completionDate: string | null;
+  expirationDate: string | null;
   status: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'EXPIRED';
 }

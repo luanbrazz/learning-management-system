@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tasks")
-@PreAuthorize("hasRole('ROLE_STUDENT')")
+@PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
 public class TaskController extends BaseController<Task, UUID> {
 
     private final TaskService taskService;

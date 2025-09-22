@@ -1,0 +1,33 @@
+<div class="container mt-4">
+  <h2 class="mb-3">Cursos Disponíveis</h2>
+  <div *ngIf="courses.length > 0; else noCourses">
+    <table class="table table-striped table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Nome</th>
+        <th scope="col">Descrição</th>
+        <th scope="col">Duração (meses)</th>
+        <th scope="col">Ações</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let course of courses">
+        <td>{{ course.name }}</td>
+        <td>{{ course.description }}</td>
+        <td>{{ course.durationInMonths }}</td>
+        <td>
+          <button (click)="enrollInCourse(course.id)" class="btn btn-sm btn-primary">
+            Matricular
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #noCourses>
+    <div class="alert alert-info text-center">
+      Nenhum curso disponível no momento.
+    </div>
+  </ng-template>
+</div>

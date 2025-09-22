@@ -1,0 +1,13 @@
+.table-hover tbody tr,
+input,
+button,
+select,
+optgroup,
+textarea {
+  cursor: pointer;
+}
+
+.table-hover tbody tr.disabled-row {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

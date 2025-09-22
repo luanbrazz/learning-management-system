@@ -1,0 +1,28 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Gerenciamento de Cursos</h2>
+    <a routerLink="/courses/new" class="btn btn-primary">Adicionar Novo Curso</a>
+  </div>
+
+  <div *ngIf="courses.length > 0; else noCourses">
+    <div class="list-group">
+      <div *ngFor="let course of courses" class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <h5 class="mb-1">{{ course.name }}</h5>
+          <p class="mb-1">{{ course.description }}</p>
+          <small class="text-muted">Duração: {{ course.durationInMonths }} meses</small>
+        </div>
+        <div>
+          <a [routerLink]="['/courses', course.id, 'edit']" class="btn btn-sm btn-outline-secondary me-2">Editar</a>
+          <button (click)="deleteCourse(course.id)" class="btn btn-sm btn-outline-danger">Excluir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noCourses>
+    <div class="alert alert-info text-center mt-3">
+      Nenhum curso encontrado. Clique em "Adicionar Novo Curso" para começar.
+    </div>
+  </ng-template>
+</div>

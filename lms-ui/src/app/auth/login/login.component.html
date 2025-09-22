@@ -1,0 +1,26 @@
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-lg p-4">
+          <h2 class="card-title text-center mb-4">Login</h2>
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="username" class="form-label">Email</label>
+              <input type="email" id="username" formControlName="username" class="form-control" placeholder="Seu email">
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Senha</label>
+              <input type="password" id="password" formControlName="password" class="form-control" placeholder="Sua senha">
+            </div>
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">Entrar</button>
+            </div>
+
+            <div class="text-center mt-3">
+              <a [routerLink]="['/auth/register']">Ainda não tem conta? Registre-se aqui</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

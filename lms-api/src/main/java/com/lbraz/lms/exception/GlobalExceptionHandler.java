@@ -175,4 +175,16 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(error);
     }
+
+    @ExceptionHandler(InvalidTaskCategoryException.class)
+    public ResponseEntity<StandardError> handleInvalidTaskCategoryException(InvalidTaskCategoryException ex, HttpServletRequest request) {
+        StandardError error = StandardError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(BAD_REQUEST.value())
+                .error(BAD_REQUEST.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+        return ResponseEntity.status(BAD_REQUEST).body(error);
+    }
 }

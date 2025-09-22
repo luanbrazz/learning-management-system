@@ -1,0 +1,22 @@
+<div class="container mt-5">
+  <div class="jumbotron text-center">
+    <h1 class="display-4">Bem-vindo(a), {{ fullName }}!</h1>
+    <p class="lead">Sua jornada de aprendizado no LMS começa aqui.</p>
+    <hr class="my-4">
+
+    <div *ngIf="userRole === 'ROLE_ADMIN'">
+      <p>Acesse o painel de administração para gerenciar cursos e matrículas.</p>
+      <a routerLink="/courses" class="btn btn-primary me-2">Gerenciar Cursos</a>
+      <a routerLink="/admin/enrollments" class="btn btn-info me-2">Gerenciar Matrículas</a>
+    </div>
+
+    <div *ngIf="userRole === 'ROLE_STUDENT'">
+      <p>Veja seus cursos e comece a registrar suas tarefas.</p>
+      <a routerLink="/student/courses" class="btn btn-primary me-2">Buscar Cursos</a>
+      <a routerLink="/student/enrollments" class="btn btn-info me-2">Minhas Matrículas</a>
+    </div>
+
+<!--    <hr class="my-4">-->
+<!--    <button class="btn btn-danger" (click)="logout()">Sair</button>-->
+  </div>
+</div>

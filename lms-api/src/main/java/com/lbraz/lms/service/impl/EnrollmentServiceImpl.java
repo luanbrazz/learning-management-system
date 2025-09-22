@@ -4,7 +4,9 @@ import com.lbraz.lms.dto.EnrollmentRequest;
 import com.lbraz.lms.entity.Course;
 import com.lbraz.lms.entity.Enrollment;
 import com.lbraz.lms.entity.Student;
+import com.lbraz.lms.entity.User;
 import com.lbraz.lms.enums.CourseStatus;
+import com.lbraz.lms.enums.Role;
 import com.lbraz.lms.exception.DuplicateResourceException;
 import com.lbraz.lms.exception.EnrollmentExpirationException;
 import com.lbraz.lms.exception.InvalidStatusChangeException;
@@ -12,8 +14,10 @@ import com.lbraz.lms.exception.ResourceNotFoundException;
 import com.lbraz.lms.repository.CourseRepository;
 import com.lbraz.lms.repository.EnrollmentRepository;
 import com.lbraz.lms.repository.StudentRepository;
+import com.lbraz.lms.repository.UserRepository;
 import com.lbraz.lms.service.EnrollmentService;
 import com.lbraz.lms.util.MessageUtil;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,15 +35,39 @@ public class EnrollmentServiceImpl extends BaseServiceImpl<Enrollment, UUID> imp
     private final EnrollmentRepository enrollmentRepository;
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
 
     public EnrollmentServiceImpl(
             EnrollmentRepository enrollmentRepository,
             StudentRepository studentRepository,
-            CourseRepository courseRepository) {
+            CourseRepository courseRepository,
+            UserRepository userRepository) {
         super(enrollmentRepository);
         this.enrollmentRepository = enrollmentRepository;
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Enrollment> findEnrollmentsForCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsernameWithStudent(username)
+                .orElseThrow(() -> new ResourceNotFoundException(MessageUtil.get("error.user.notFound")));
+
+        boolean isAdmin = user.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals(Role.ROLE_ADMIN.getName()));
+
+        if (isAdmin) {
+            return enrollmentRepository.findAll();
+        } else {
+            UUID studentId = user.getStudent() != null ? user.getStudent().getId() : null;
+            if (studentId == null) {
+                throw new ResourceNotFoundException(MessageUtil.get("error.student.notFound"));
+            }
+            return enrollmentRepository.findByStudentId(studentId);
+        }
     }
 
     @Override
@@ -47,11 +75,9 @@ public class EnrollmentServiceImpl extends BaseServiceImpl<Enrollment, UUID> imp
     public Enrollment enrollStudent(EnrollmentRequest request) {
         Student student = this.findStudent(request.studentId());
         Course course = this.findCourse(request.courseId());
-
         enrollmentRepository.findByStudentIdAndCourseId(student.getId(), course.getId())
                 .ifPresent(existingEnrollment -> {
-                    if (existingEnrollment.getStatus() == CourseStatus.EXPIRED) {
-                    } else {
+                    if (existingEnrollment.getStatus() != CourseStatus.EXPIRED) {
                         throw new DuplicateResourceException(MessageUtil.get("error.enrollment.duplicate"));
                     }
                 });

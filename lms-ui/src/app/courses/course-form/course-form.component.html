@@ -1,0 +1,27 @@
+<div class="container mt-4">
+  <h2>{{ isEditMode ? 'Editar Curso' : 'Novo Curso' }}</h2>
+
+  <form [formGroup]="courseForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="name" class="form-label">Nome do Curso</label>
+      <input type="text" id="name" formControlName="name" class="form-control" placeholder="Ex: Introdução ao Angular">
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Descrição</label>
+      <textarea id="description" formControlName="description" class="form-control" rows="3" placeholder="Descrição detalhada do curso"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="durationInMonths" class="form-label">Duração (em meses)</label>
+      <input type="number" id="durationInMonths" formControlName="durationInMonths" class="form-control" placeholder="Ex: 3">
+    </div>
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <button type="submit" class="btn btn-primary me-md-2" [disabled]="!courseForm.valid">
+        {{ isEditMode ? 'Salvar Alterações' : 'Criar Curso' }}
+      </button>
+      <button type="button" class="btn btn-secondary" routerLink="/courses">Cancelar</button>
+    </div>
+  </form>
+</div>

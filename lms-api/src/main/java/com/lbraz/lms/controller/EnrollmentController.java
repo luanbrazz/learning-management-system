@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +21,12 @@ public class EnrollmentController extends BaseController<Enrollment, UUID> {
     public EnrollmentController(EnrollmentService enrollmentService) {
         super(enrollmentService);
         this.enrollmentService = enrollmentService;
+    }
+
+    @Override
+    @GetMapping
+    public ResponseEntity<List<Enrollment>> findAll() {
+        return ResponseEntity.ok(enrollmentService.findEnrollmentsForCurrentUser());
     }
 
     @PostMapping("/enroll")

@@ -1,0 +1,104 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg p-4">
+        <h2 class="card-title text-center mb-4">Registro de Estudante</h2>
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="firstName" class="form-label">Primeiro Nome</label>
+            <input type="text" id="firstName" formControlName="firstName" class="form-control" placeholder="Seu nome">
+            <div *ngIf="f['firstName'].touched && f['firstName'].invalid" class="text-danger">
+              <div *ngIf="f['firstName'].errors?.['required']">O primeiro nome é obrigatório.</div>
+              <div *ngIf="f['firstName'].errors?.['minlength']">O primeiro nome deve ter pelo menos 2 caracteres.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Último Nome</label>
+            <input type="text" id="lastName" formControlName="lastName" class="form-control" placeholder="Seu sobrenome">
+            <div *ngIf="f['lastName'].touched && f['lastName'].invalid" class="text-danger">
+              <div *ngIf="f['lastName'].errors?.['required']">O último nome é obrigatório.</div>
+              <div *ngIf="f['lastName'].errors?.['minlength']">O último nome deve ter pelo menos 2 caracteres.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" formControlName="email" class="form-control" placeholder="email@exemplo.com">
+            <div *ngIf="f['email'].touched && f['email'].invalid" class="text-danger">
+              <div *ngIf="f['email'].errors?.['required']">O email é obrigatório.</div>
+              <div *ngIf="f['email'].errors?.['email']">Por favor, insira um email válido.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="birthDate" class="form-label">Data de Nascimento</label>
+            <input type="date" id="birthDate" formControlName="birthDate" class="form-control">
+            <div *ngIf="f['birthDate'].touched && f['birthDate'].invalid" class="text-danger">
+              <div *ngIf="f['birthDate'].errors?.['required']">A data de nascimento é obrigatória.</div>
+            </div>
+          </div>
+          <hr>
+          <h5 class="text-center mb-3">Informações de Contato</h5>
+          <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Telefone</label>
+            <input type="text" id="phoneNumber" formControlName="phoneNumber" class="form-control" placeholder="(DD) 9XXXX-XXXX">
+            <div *ngIf="f['phoneNumber'].touched && f['phoneNumber'].invalid" class="text-danger">
+              <div *ngIf="f['phoneNumber'].errors?.['required']">O telefone é obrigatório.</div>
+<!--              <div *ngIf="f['phoneNumber'].errors?.['pattern']">Formato inválido. Use (DD) 9XXXX-XXXX.</div>-->
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="zipCode" class="form-label">CEP</label>
+            <input type="text" id="zipCode" formControlName="zipCode" class="form-control" placeholder="00000-000">
+            <div *ngIf="f['zipCode'].touched && f['zipCode'].invalid" class="text-danger">
+              <div *ngIf="f['zipCode'].errors?.['required']">O CEP é obrigatório.</div>
+              <div *ngIf="f['zipCode'].errors?.['pattern']">O CEP deve conter 8 dígitos.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="addressLine1" class="form-label">Rua e Número</label>
+            <input type="text" id="addressLine1" formControlName="addressLine1" class="form-control" placeholder="Ex: Rua A, 123">
+            <div *ngIf="f['addressLine1'].touched && f['addressLine1'].invalid" class="text-danger">
+              <div *ngIf="f['addressLine1'].errors?.['required']">O endereço é obrigatório.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="addressLine2" class="form-label">Complemento (Opcional)</label>
+            <input type="text" id="addressLine2" formControlName="addressLine2" class="form-control" placeholder="Ex: Apto 101">
+          </div>
+          <div class="mb-3">
+            <label for="city" class="form-label">Cidade</label>
+            <input type="text" id="city" formControlName="city" class="form-control" placeholder="Sua cidade">
+            <div *ngIf="f['city'].touched && f['city'].invalid" class="text-danger">
+              <div *ngIf="f['city'].errors?.['required']">A cidade é obrigatória.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="state" class="form-label">Estado</label>
+            <input type="text" id="state" formControlName="state" class="form-control" placeholder="Seu estado">
+            <div *ngIf="f['state'].touched && f['state'].invalid" class="text-danger">
+              <div *ngIf="f['state'].errors?.['required']">O estado é obrigatório.</div>
+              <div *ngIf="f['state'].errors?.['minlength']">O estado deve ter pelo menos 2 caracteres.</div>
+            </div>
+          </div>
+          <hr>
+          <h5 class="text-center mb-3">Dados de Acesso</h5>
+          <div class="mb-3">
+            <label for="password" class="form-label">Senha</label>
+            <input type="password" id="password" formControlName="password" class="form-control">
+            <div *ngIf="f['password'].touched && f['password'].invalid" class="text-danger">
+              <div *ngIf="f['password'].errors?.['required']">A senha é obrigatória.</div>
+              <div *ngIf="f['password'].errors?.['minlength']">A senha deve ter pelo menos 6 caracteres.</div>
+            </div>
+          </div>
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary" [disabled]="!registerForm.valid || loading">
+              {{ loading ? 'Registrando...' : 'Registrar' }}
+            </button>
+          </div>
+          <div class="text-center mt-3">
+            <a [routerLink]="['/auth/login']">Já tem uma conta? Faça login aqui</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -2,10 +2,13 @@ package com.lbraz.lms.service.impl;
 
 import com.lbraz.lms.entity.Enrollment;
 import com.lbraz.lms.entity.Task;
+import com.lbraz.lms.entity.TaskCategory;
 import com.lbraz.lms.enums.CourseStatus;
+import com.lbraz.lms.exception.InvalidTaskCategoryException;
 import com.lbraz.lms.exception.InvalidTimeException;
 import com.lbraz.lms.exception.ResourceNotFoundException;
 import com.lbraz.lms.repository.EnrollmentRepository;
+import com.lbraz.lms.repository.TaskCategoryRepository;
 import com.lbraz.lms.repository.TaskRepository;
 import com.lbraz.lms.service.TaskService;
 import com.lbraz.lms.util.MessageUtil;
@@ -17,14 +20,15 @@ import java.util.UUID;
 
 @Service
 public class TaskServiceImpl extends BaseServiceImpl<Task, UUID> implements TaskService {
-
     private final EnrollmentRepository enrollmentRepository;
+    private final TaskCategoryRepository taskCategoryRepository;
     private final TaskRepository repository;
 
-    public TaskServiceImpl(TaskRepository repository, EnrollmentRepository enrollmentRepository) {
+    public TaskServiceImpl(TaskRepository repository, EnrollmentRepository enrollmentRepository, TaskCategoryRepository taskCategoryRepository) {
         super(repository);
         this.repository = repository;
         this.enrollmentRepository = enrollmentRepository;
+        this.taskCategoryRepository = taskCategoryRepository;
     }
 
     @Override
@@ -36,8 +40,11 @@ public class TaskServiceImpl extends BaseServiceImpl<Task, UUID> implements Task
 
         Enrollment enrollment = enrollmentRepository.findById(entity.getEnrollment().getId())
                 .orElseThrow(() -> new ResourceNotFoundException(MessageUtil.get("error.enrollment.notFound", entity.getEnrollment().getId())));
-
         entity.setEnrollment(enrollment);
+
+        TaskCategory taskCategory = taskCategoryRepository.findById(entity.getTaskCategory().getId())
+                .orElseThrow(() -> InvalidTaskCategoryException.forTaskCategoryId(entity.getTaskCategory().getId().toString()));
+        entity.setTaskCategory(taskCategory);
 
         if (enrollment.getStatus() == CourseStatus.NOT_STARTED) {
             enrollment.setStatus(CourseStatus.IN_PROGRESS);

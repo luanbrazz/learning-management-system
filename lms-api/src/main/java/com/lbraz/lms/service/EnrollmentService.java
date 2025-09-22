@@ -12,4 +12,6 @@ public interface EnrollmentService extends BaseService<Enrollment, UUID> {
     Enrollment completeCourse(UUID enrollmentId);
 
     void updateExpiredEnrollments(List<UUID> enrollmentIds);
+
+    List<Enrollment> findEnrollmentsForCurrentUser();
 }
