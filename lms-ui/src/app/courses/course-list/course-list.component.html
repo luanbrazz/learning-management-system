@@ -14,7 +14,7 @@
         </div>
         <div>
           <a [routerLink]="['/courses', course.id, 'edit']" class="btn btn-sm btn-outline-secondary me-2">Editar</a>
-          <button (click)="deleteCourse(course.id)" class="btn btn-sm btn-outline-danger">Excluir</button>
+          <button (click)="showDeleteConfirmation(course.id)" class="btn btn-sm btn-outline-danger">Excluir</button>
         </div>
       </div>
     </div>
@@ -26,3 +26,11 @@
     </div>
   </ng-template>
 </div>
+
+<app-confirmation-modal
+  *ngIf="showConfirmationModal"
+  title="Confirmar Exclusão de Curso"
+  message="Tem certeza que deseja excluir este curso?"
+  (confirm)="confirmDeletion()"
+  (cancel)="cancelDeletion()">
+</app-confirmation-modal>
