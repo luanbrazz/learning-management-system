@@ -36,4 +36,7 @@ public class Course {
     @Max(6)
     @Column(name = "duration_in_months", nullable = false)
     private Integer durationInMonths;
+
+    @Transient
+    private boolean isEnrolled;
 }
